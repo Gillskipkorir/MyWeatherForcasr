@@ -5,7 +5,7 @@ The Api I used are
 
 ## Encountered Issues With Api
 
-When trying to The Json results of this endpoint:
+When trying to The Json results of some endpoints:
 ** https://api.openweathermap.org/data/2.5/forecast/daily?q=nairobi&cnt=2&appid=358c550eaa931d17bbe2602e25ec8d72
 
 I get the error below despite using the api Key working on all other endpoints and as a result making

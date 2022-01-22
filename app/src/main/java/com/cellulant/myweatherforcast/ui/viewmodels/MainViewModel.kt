@@ -27,22 +27,19 @@ class MainViewModel(app: Application, val mainRepository: MainRepository) :
     var oneCallForecastResponse: OneCallResponse? = null
 
 
-    fun getForeCast() = viewModelScope.launch {
-        safeGetForecast()
+    fun getForeCast(cityName: String) = viewModelScope.launch {
+        safeGetForecast(cityName)
     }
 
     fun getFullForeCast() = viewModelScope.launch {
         safeGetALLForecast()
     }
 
-    fun getOneCallForeCast() = viewModelScope.launch {
-        safeGetOneCallForecast()
-    }
 
-    private suspend fun safeGetForecast() {
+    private suspend fun safeGetForecast(cityName: String) {
         forcast.postValue(Resource.Loading())
         try {
-            val response = mainRepository.getForecast()
+            val response = mainRepository.getForecast(cityName)
             forcast.postValue(handleWeatherResponse(response))
         } catch (t: Throwable) {
             when (t) {
@@ -55,7 +52,7 @@ class MainViewModel(app: Application, val mainRepository: MainRepository) :
     private suspend fun safeGetALLForecast() {
         fullforecast.postValue(Resource.Loading())
         try {
-            val response = mainRepository.getForecast()
+            val response = mainRepository.getFullForecast()
             fullforecast.postValue(handleFullWeatherResponse(response))
         } catch (t: Throwable) {
             when (t) {

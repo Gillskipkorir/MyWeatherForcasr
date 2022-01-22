@@ -11,15 +11,14 @@ import retrofit2.Response
 
 class MainRepository {
 
-    suspend fun getForecast(): Response<ForecastModels?>? {
-        val fiveDaysWeather =
-            RetrofitInstance.api.getFiveDaysWeather(
-                DEFAULT_LOCATION,
-                UNIT_MEASURE,
-                LANGUAGE,
-                API_KEY
-            )
-        return fiveDaysWeather
+    suspend fun getForecast(city: String): Response<ForecastModels?>? {
+
+        return RetrofitInstance.api.getFiveDaysWeather(
+            city,
+            UNIT_MEASURE,
+            LANGUAGE,
+            API_KEY
+        )
     }
 
 
