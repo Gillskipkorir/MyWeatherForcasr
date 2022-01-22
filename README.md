@@ -3,6 +3,8 @@
 The Api I used are
 ** https://api.openweathermap.org/data/2.5/weather
 
+##Default Location Set To Nairobi
+
 ## Encountered Issues With Api
 
 When trying to The Json results of some endpoints:

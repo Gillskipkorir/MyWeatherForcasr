@@ -10,9 +10,6 @@ import com.bumptech.glide.Glide
 import com.cellulant.myweatherforcast.databinding.ItemForecastBinding
 import com.cellulant.myweatherforcast.models.forcast.MainResponse
 import com.cellulant.myweatherforcast.utils.Constants.IMAGE_BASE_URL
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.AnnouncementViewHolder>() {
 
