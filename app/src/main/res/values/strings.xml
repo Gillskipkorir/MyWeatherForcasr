@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Weather Forcast</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="later">Later</string>
+    <string name="search_a_city">Search a city</string>
+</resources>
