@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
 import com.cellulant.myweatherforcast.adapter.OneCallAdapter
+import com.cellulant.myweatherforcast.adapter.WeatherAdapter
 import com.cellulant.myweatherforcast.databinding.FragmentTommorowBinding
 import com.cellulant.myweatherforcast.ui.BindingFragment
 import com.cellulant.myweatherforcast.ui.activity.MainActivity
@@ -17,7 +18,7 @@ import timber.log.Timber
 
 class TomorrowFragment : BindingFragment<FragmentTommorowBinding>() {
     lateinit var viewModel: MainViewModel
-    private lateinit var weatherAdapter: OneCallAdapter
+    private lateinit var weatherAdapter: WeatherAdapter
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentTommorowBinding::inflate
@@ -33,12 +34,12 @@ class TomorrowFragment : BindingFragment<FragmentTommorowBinding>() {
     }
 
     private fun subscribeToObservers() {
-        viewModel.oneCallForecast.observe(viewLifecycleOwner, { response ->
+        viewModel.forcast.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     response.data?.let {
-                        weatherAdapter.differ.submitList(it.hourly.toList())
+                        weatherAdapter.differ.submitList(it.list.toList())
                     }
                 }
                 is Resource.Error -> {
@@ -58,7 +59,7 @@ class TomorrowFragment : BindingFragment<FragmentTommorowBinding>() {
     }
 
     private fun setUpRecyclerview() {
-        weatherAdapter = OneCallAdapter()
+        weatherAdapter = WeatherAdapter()
         binding.rvWeather.apply {
             adapter = weatherAdapter
             layoutManager = LinearLayoutManager(activity)

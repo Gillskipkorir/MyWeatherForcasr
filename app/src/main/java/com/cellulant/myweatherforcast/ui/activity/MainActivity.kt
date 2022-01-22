@@ -18,16 +18,18 @@ import com.cellulant.myweatherforcast.databinding.ActivityMainBinding
 import com.cellulant.myweatherforcast.models.current.CurrentWeatherModel
 import com.cellulant.myweatherforcast.repositories.MainRepository
 import com.cellulant.myweatherforcast.ui.viewmodels.MainViewModel
+import com.cellulant.myweatherforcast.ui.viewmodels.MainViewModelProviderFactory
 import com.cellulant.myweatherforcast.utils.Constants.API_KEY
 import com.cellulant.myweatherforcast.utils.Constants.DEFAULT_LOCATION
 import com.cellulant.myweatherforcast.utils.Constants.IMAGE_BASE_URL
 import com.cellulant.myweatherforcast.utils.Constants.LANGUAGE
 import com.cellulant.myweatherforcast.utils.Constants.UNIT_MEASURE
-import com.cellulant.myweatherforcast.ui.viewmodels.MainViewModelProviderFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -50,13 +52,31 @@ class MainActivity : AppCompatActivity() {
             setOnItemReselectedListener { /* NO-OP */ }
         }
 
-
+        fetchFromSharedPrefs()
         getCurrentWeather(DEFAULT_LOCATION)
         searchCity()
     }
 
+    private fun fetchFromSharedPrefs() {
+        val pref = this.getSharedPreferences("DefaultLocation", 0).apply {
+            getString("Place", "").let { binding.place.text = it }
+            getString("Description", "").let { binding.cloudCounts.text = it }
+            getString("Temperature", "").let { binding.tempTextView.text = it }
+            getString("Humidity", "").let { binding.humidity.text = it }
+            getString("Pressure", "").let { binding.pressure.text = it }
+            getString("WindSpend", "").let { binding.windSpeed.text = it }
+            getString("Sunrise", "").let { binding.sunrise.text = it }
+            getString("Sunset", "").let { binding.sunset.text = it }
+            getString("UpdatedOn", "").let { binding.lastUpdate.text = it }
+
+            getString("IconUrl", "").let {
+                Glide.with(this@MainActivity).load(it).into(binding.icon)
+            }
+        }
+    }
+
     private fun searchCity() {
-        binding.etSearch.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        binding.etSearch.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard()
                 searchAction()
@@ -95,6 +115,10 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val weather = response.body()
 
+                    val dateFormat: DateFormat =
+                        SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+                    val myDate = dateFormat.format(Date())
+
                     /* todo: Convert Time String to */
 
                     val windSpeed = "Wind: ${weather?.wind?.speed} m/s"
@@ -105,10 +129,12 @@ class MainActivity : AppCompatActivity() {
                     val cityName = "${weather?.name}, ${weather?.sys?.country}"
                     val temp = "${weather?.main?.temp} °C"
                     val imageUrl = "$IMAGE_BASE_URL${weather?.weather?.get(0)?.icon}.png"
+                    val desc = weather?.weather?.get(0)?.description
 
+                    //Set Image Using Glide
                     Glide.with(this@MainActivity).load(imageUrl).into(binding.icon)
 
-                    binding.cloudCounts.text = weather?.weather?.get(0)?.description
+                    binding.cloudCounts.text = desc
                     binding.tempTextView.text = temp
                     binding.windSpeed.text = windSpeed
                     binding.humidity.text = humidity
@@ -116,6 +142,23 @@ class MainActivity : AppCompatActivity() {
                     binding.sunrise.text = sunrise
                     binding.sunset.text = sunset
                     binding.place.text = cityName
+                    binding.lastUpdate.text = "Last Updated: $myDate"
+
+                    //Saving the data in shared Prefs
+                    applicationContext
+                        .getSharedPreferences("DefaultLocation", 0)
+                        .edit()
+                        .putString("Place", cityName)
+                        .putString("Description", desc)
+                        .putString("Temperature", temp)
+                        .putString("Humidity", humidity)
+                        .putString("Pressure", pressure)
+                        .putString("WindSpend", windSpeed)
+                        .putString("IconUrl", imageUrl)
+                        .putString("Sunrise", sunrise)
+                        .putString("Sunset", sunset)
+                        .putString("UpdatedOn", myDate)
+                        .apply()
 
 
                 } else {

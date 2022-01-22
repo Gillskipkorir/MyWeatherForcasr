@@ -3,7 +3,6 @@ package com.cellulant.myweatherforcast.adapter
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -50,15 +49,13 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.AnnouncementViewHolde
     override fun onBindViewHolder(holder: AnnouncementViewHolder, position: Int) {
         val data = differ.currentList[position]
 
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd h:i:s", Locale.getDefault())
-        val myDate = dateFormat.format(Date())
+
 
         val wind = "Wind: ${data.wind.speed} m/s"
         val humid = "Humidity: ${data.wind.speed} %"
         val pre = "Pressure: ${data.main.pressure} hPa"
         val temperature = "${data.main.temp} °C"
         val imageUrl = "$IMAGE_BASE_URL${data.weather[0].icon}.png"
-
 
         val desc = data.weather[0].description
         holder.binding.apply {

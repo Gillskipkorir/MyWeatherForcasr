@@ -12,7 +12,6 @@ import com.cellulant.myweatherforcast.ui.BindingFragment
 import com.cellulant.myweatherforcast.ui.activity.MainActivity
 import com.cellulant.myweatherforcast.ui.viewmodels.MainViewModel
 import com.cellulant.myweatherforcast.utils.Resource
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 
@@ -29,12 +28,12 @@ class LaterFragment : BindingFragment<FragmentLaterBinding>() {
         viewModel = (activity as MainActivity).viewModel
         setUpRecyclerview()
 
-        viewModel.getForeCast()
+        viewModel.getFullForeCast()
         subscribeToObservers()
     }
 
     private fun subscribeToObservers() {
-        viewModel.forcast.observe(viewLifecycleOwner, { response ->
+        viewModel.fullforecast.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE

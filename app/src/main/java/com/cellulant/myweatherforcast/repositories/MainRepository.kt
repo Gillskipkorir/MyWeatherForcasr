@@ -23,6 +23,17 @@ class MainRepository {
     }
 
 
+    suspend fun getFullForecast(): Response<ForecastModels?>? {
+        return RetrofitInstance.api.getThirtyDaysWeather(
+            DEFAULT_LOCATION,
+            UNIT_MEASURE,
+            LANGUAGE,
+            API_KEY
+        )
+
+    }
+
+
     suspend fun getOneCAllForecast(): Response<OneCallResponse?>? {
         val oneCallWeather =
             RetrofitInstance.api.getOnceCallWeather(

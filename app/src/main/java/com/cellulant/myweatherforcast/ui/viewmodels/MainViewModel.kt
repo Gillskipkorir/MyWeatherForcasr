@@ -19,12 +19,20 @@ class MainViewModel(app: Application, val mainRepository: MainRepository) :
     val forcast: MutableLiveData<Resource<ForecastModels>> = MutableLiveData()
     var forcastResponse: ForecastModels? = null
 
+    val fullforecast: MutableLiveData<Resource<ForecastModels>> = MutableLiveData()
+    var fullforecastResponse: ForecastModels? = null
+
+
     val oneCallForecast: MutableLiveData<Resource<OneCallResponse>> = MutableLiveData()
     var oneCallForecastResponse: OneCallResponse? = null
 
 
     fun getForeCast() = viewModelScope.launch {
         safeGetForecast()
+    }
+
+    fun getFullForeCast() = viewModelScope.launch {
+        safeGetALLForecast()
     }
 
     fun getOneCallForeCast() = viewModelScope.launch {
@@ -44,16 +52,15 @@ class MainViewModel(app: Application, val mainRepository: MainRepository) :
         }
     }
 
-
-    private suspend fun safeGetOneCallForecast() {
-        oneCallForecast.postValue(Resource.Loading())
+    private suspend fun safeGetALLForecast() {
+        fullforecast.postValue(Resource.Loading())
         try {
-            val response = mainRepository.getOneCAllForecast()
-            oneCallForecast.postValue(handleOneCallWeatherResponse(response))
+            val response = mainRepository.getForecast()
+            fullforecast.postValue(handleFullWeatherResponse(response))
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> oneCallForecast.postValue(Resource.Error("Network failure"))
-                else -> oneCallForecast.postValue(Resource.Error("Conversion error"))
+                is IOException -> fullforecast.postValue(Resource.Error("Network failure"))
+                else -> fullforecast.postValue(Resource.Error("Conversion error"))
             }
         }
     }
@@ -75,6 +82,35 @@ class MainViewModel(app: Application, val mainRepository: MainRepository) :
 
     }
 
+    private fun handleFullWeatherResponse(response: Response<ForecastModels?>?): Resource<ForecastModels> {
+
+        if (response != null) {
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    val oldData = fullforecastResponse?.list
+                    val newData = it.list
+                    oldData?.addAll(newData)
+                    return Resource.Success(fullforecastResponse ?: it)
+                }
+            }
+        }
+        return Resource.Error(response?.message())
+
+    }
+
+
+    private suspend fun safeGetOneCallForecast() {
+        oneCallForecast.postValue(Resource.Loading())
+        try {
+            val response = mainRepository.getOneCAllForecast()
+            oneCallForecast.postValue(handleOneCallWeatherResponse(response))
+        } catch (t: Throwable) {
+            when (t) {
+                is IOException -> oneCallForecast.postValue(Resource.Error("Network failure"))
+                else -> oneCallForecast.postValue(Resource.Error("Conversion error"))
+            }
+        }
+    }
 
     private fun handleOneCallWeatherResponse(response: Response<OneCallResponse?>?): Resource<OneCallResponse> {
 

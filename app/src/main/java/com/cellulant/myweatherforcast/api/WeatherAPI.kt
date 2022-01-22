@@ -36,6 +36,19 @@ interface WeatherAPI {
         appId: String = API_KEY
     ): Response<ForecastModels?>?
 
+    @GET("climate")
+    suspend fun getThirtyDaysWeather(
+        @Query("q")
+        q: String?,
+        @Query("units")
+        units: String?,
+        @Query("lang")
+        lang: String?,
+        @Query("appid")
+        appId: String = API_KEY
+    ): Response<ForecastModels?>?
+
+
     @GET("onecall")
     suspend fun getOnceCallWeather(
         @Query("lat")
